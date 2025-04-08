@@ -25,7 +25,7 @@ A modern and efficient **Pharmacy Management Desktop Application** built using *
 - View login activity of all users
 
 ### 💊 Medicine & Inventory Management
-- Add, update, and delete medicines
+
 - Manage inventory stock (quantity, batch number, invoice, tracking number)
 - Filter inventory by `Inventory ID` or `Medicine ID`
 
@@ -41,7 +41,7 @@ A modern and efficient **Pharmacy Management Desktop Application** built using *
   - View and manage all employee accounts
   - View all sales made by any user
 - **Employee Dashboard**:
-  - Restricted access (Only customer and sales modules)
+  - Restricted access (Sales and Add User feature not available.)
   - Track personal sales only
 
 ### 📅 Sorting & Filtering
