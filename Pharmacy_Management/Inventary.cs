@@ -14,22 +14,20 @@ namespace Pharmacy_Management
     public partial class Inventary : Form
     {
         private string connectionString = @"Server=(localdb)\Mylocaldb; Database=Pharmacy_Management; Integrated Security=True;";
+        private DataTable dt = new DataTable();
+        private SqlDataAdapter adapter;
 
         public Inventary()
         {
             InitializeComponent();
             InitializeInventoryGridView();
-            LoadInventoryData(); 
+            LoadInventoryData();
         }
 
         private void InitializeInventoryGridView()
         {
-           
+            // You can set up column styles or headers here if needed
         }
-
-        private DataTable dt = new DataTable();
-        private SqlDataAdapter adapter;
-
 
         private void LoadInventoryData(string inventoryId = "", string medicineId = "")
         {
@@ -47,8 +45,8 @@ namespace Pharmacy_Management
                 try
                 {
                     conn.Open();
-                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                    DataTable dt = new DataTable();
+                    adapter = new SqlDataAdapter(cmd); // use class-level adapter
+                    dt = new DataTable();              // use class-level dt
                     adapter.Fill(dt);
                     dataGridView1.DataSource = dt;
                 }
@@ -61,9 +59,8 @@ namespace Pharmacy_Management
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string inventoryId = textBox3.Text.Trim(); 
-            string medicineId = textBox4.Text.Trim(); 
-
+            string inventoryId = textBox3.Text.Trim();
+            string medicineId = textBox4.Text.Trim();
             LoadInventoryData(inventoryId, medicineId);
         }
 
@@ -79,15 +76,15 @@ namespace Pharmacy_Management
 
         private void Inventory_Load(object sender, EventArgs e)
         {
-            LoadInventoryData(); 
+            LoadInventoryData();
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-           
+            // Optional: Handle clicks on DataGridView cells
         }
 
-        private void button3_Click(object sender, EventArgs e) //delete function
+        private void button3_Click(object sender, EventArgs e) // Delete function
         {
             // Check if data is loaded
             if (adapter == null || dt == null || dt.Rows.Count == 0)
@@ -129,8 +126,8 @@ namespace Pharmacy_Management
 
                         // Set the DeleteCommand for the adapter
                         adapter.DeleteCommand = new SqlCommand(
-                            @"DELETE FROM Medicine WHERE MedicineID = @MedicineID", conn);
-                        adapter.DeleteCommand.Parameters.Add("@MedicineID", SqlDbType.Int, 0, "MedicineID");
+                            @"DELETE FROM Inventory WHERE InventoryID = @InventoryID", conn);
+                        adapter.DeleteCommand.Parameters.Add("@InventoryID", SqlDbType.Int, 0, "InventoryID");
 
                         // Apply deletions to the database
                         adapter.Update(dt);
@@ -138,7 +135,7 @@ namespace Pharmacy_Management
                     }
 
                     // Reload the updated data
-                    LoadInventoryData(textBox1.Text.Trim(), textBox2.Text.Trim());
+                    LoadInventoryData(textBox3.Text.Trim(), textBox4.Text.Trim());
 
                     MessageBox.Show("Record(s) deleted successfully.", "Deleted", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -152,8 +149,5 @@ namespace Pharmacy_Management
                 }
             }
         }
-
     }
 }
-
-    
