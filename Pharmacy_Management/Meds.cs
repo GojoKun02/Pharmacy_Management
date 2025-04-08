@@ -3,7 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 
-namespace Pharmacy_Management
+namespace Pharmacy_Management // Comment for copy2
 {
     public partial class Meds : Form
     {
@@ -28,7 +28,7 @@ namespace Pharmacy_Management
 
         private void LoadMedicineData(string medidPrefix = "", string mednamePrefix = "")
         {
-            string query = @"
+            string query = @" 
                 SELECT 
                     MedicineID, 
                     MedicineName, 
@@ -38,7 +38,7 @@ namespace Pharmacy_Management
                     Medicine_Expiration_Date
                 FROM Medicine
                 WHERE (@MedidPrefix = '' OR MedicineID LIKE @MedidPrefix + '%')
-                AND (@MednamePrefix = '' OR MedicineName LIKE @MednamePrefix + '%');";
+                AND (@MednamePrefix = '' OR MedicineName LIKE @MednamePrefix + '%');"; //sql query for data display
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -158,5 +158,57 @@ namespace Pharmacy_Management
                 MessageBox.Show($"Error updating database: {ex.Message}", "Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a row to delete.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("Are you sure you want to delete the selected record(s)?",
+                                                  "Confirm Deletion",
+                                                  MessageBoxButtons.YesNo,
+                                                  MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    foreach (DataGridViewRow selectedRow in dataGridView1.SelectedRows)
+                    {
+                        if (!selectedRow.IsNewRow)
+                        {
+                            DataRow row = ((DataRowView)selectedRow.DataBoundItem).Row;
+                            row.Delete(); // Mark the row as deleted in the DataTable
+                        }
+                    }
+
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        conn.Open();
+                        adapter.DeleteCommand = new SqlCommand(
+                            @"DELETE FROM Medicine WHERE MedicineID = @MedicineID", conn);
+                        adapter.DeleteCommand.Parameters.Add("@MedicineID", SqlDbType.Int, 0, "MedicineID");
+
+                        adapter.Update(dt); // Sync changes with database
+                        dt.AcceptChanges();
+                    }
+
+                    LoadMedicineData(textBox1.Text.Trim(), textBox2.Text.Trim());
+                    MessageBox.Show("Record(s) deleted successfully.", "Deleted", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (SqlException sqlEx)
+                {
+                    MessageBox.Show($"Database error: {sqlEx.Message}", "Delete Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error deleting record(s): {ex.Message}", "Delete Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
     }
 }

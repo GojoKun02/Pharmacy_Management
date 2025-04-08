@@ -34,6 +34,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -57,6 +58,7 @@
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.textBox2);
@@ -106,6 +108,16 @@
             this.textBox1.Size = new System.Drawing.Size(185, 26);
             this.textBox1.TabIndex = 28;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(19, 410);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(101, 31);
+            this.button1.TabIndex = 22;
+            this.button1.Text = "Delete";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Meds
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -133,5 +145,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button button1;
     }
 }

@@ -27,6 +27,10 @@ namespace Pharmacy_Management
            
         }
 
+        private DataTable dt = new DataTable();
+        private SqlDataAdapter adapter;
+
+
         private void LoadInventoryData(string inventoryId = "", string medicineId = "")
         {
             string query = @"SELECT InventoryID, MedicineID, Quantity, BatchNo, InvoiceNumber, TrackingNumber
@@ -82,5 +86,74 @@ namespace Pharmacy_Management
         {
            
         }
+
+        private void button3_Click(object sender, EventArgs e) //delete function
+        {
+            // Check if data is loaded
+            if (adapter == null || dt == null || dt.Rows.Count == 0)
+            {
+                MessageBox.Show("No data loaded or adapter not initialized!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Check if user has selected any row
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a row to delete.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Confirm deletion
+            DialogResult result = MessageBox.Show("Are you sure you want to delete the selected record(s)?",
+                                                  "Confirm Deletion",
+                                                  MessageBoxButtons.YesNo,
+                                                  MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    // Mark rows for deletion in DataTable
+                    foreach (DataGridViewRow selectedRow in dataGridView1.SelectedRows)
+                    {
+                        if (!selectedRow.IsNewRow)
+                        {
+                            DataRow row = ((DataRowView)selectedRow.DataBoundItem).Row;
+                            row.Delete();
+                        }
+                    }
+
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        conn.Open();
+
+                        // Set the DeleteCommand for the adapter
+                        adapter.DeleteCommand = new SqlCommand(
+                            @"DELETE FROM Medicine WHERE MedicineID = @MedicineID", conn);
+                        adapter.DeleteCommand.Parameters.Add("@MedicineID", SqlDbType.Int, 0, "MedicineID");
+
+                        // Apply deletions to the database
+                        adapter.Update(dt);
+                        dt.AcceptChanges();
+                    }
+
+                    // Reload the updated data
+                    LoadInventoryData(textBox1.Text.Trim(), textBox2.Text.Trim());
+
+                    MessageBox.Show("Record(s) deleted successfully.", "Deleted", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (SqlException sqlEx)
+                {
+                    MessageBox.Show($"Database error: {sqlEx.Message}", "Delete Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error deleting record(s): {ex.Message}", "Delete Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
     }
 }
+
+    
